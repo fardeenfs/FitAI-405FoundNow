@@ -6,6 +6,7 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
+let counter_pushup;
 
 async function init() {
     const modelURL = URL + "model.json";
@@ -71,7 +72,7 @@ function drawPose(pose) {
         // draw the keypoints and skeleton
         if (pose) {
             const minPartConfidence = 0.5;
-            console.log(pose.keypoints);
+            //console.log(pose.keypoints);
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
         }
@@ -85,7 +86,35 @@ function find_angle(A,B,C) {
     return Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB))*(180/Math.PI);
 }
 
-//function detect_pushup()
+function detect_pushup(keypoints) {
+    rep = false
+    
+    // checking which side is visible, the elft or the right
+    let shoulder = Math.max(keypoints[5], keypoints[6])
+
+    // if left side is viisble then we gather left side info, otherwise we gather right side info
+    if (shoulder.part === "leftShoulder") {
+        let elbow = keypoints[7]
+        let wrist = keypoints[9]
+    } else {
+        let elbow = keypoints[8]
+        let wrist = keypoints[10]
+    }
+
+    // counting number of reps
+    if (find_angle(shoulder.position, elbow.position, wrist.position) > 150) {
+        if (rep) {
+            counter_pushup += 1
+            rep = false
+        }
+    }
+    if (find_angle(shoulder.position, elbow.position, wrist.position) < 100) {
+        rep = true
+    }
+
+    console.log(counter_pushup)
+}
+
 init();
 </script>
 </html>
