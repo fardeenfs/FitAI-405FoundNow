@@ -1,5 +1,6 @@
-import 'package:design_practice2/pages/home_page.dart';
-import 'package:design_practice2/pages/login_page.dart';
+import 'package:fit_ai/pages/home_page.dart';
+import 'package:fit_ai/pages/login_page.dart';
+import 'package:fit_ai/pages/main_homepage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -7,10 +8,11 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  var currentindex = 0;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage());
+    return const MaterialApp(
+        debugShowCheckedModeBanner: false, home: MainHomePage());
   }
 }

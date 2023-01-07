@@ -1,6 +1,7 @@
 import '../utils/bottom_card.dart';
 import '../utils/homepage_card.dart';
 import '../utils/profile.dart';
+
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -13,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = PageController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

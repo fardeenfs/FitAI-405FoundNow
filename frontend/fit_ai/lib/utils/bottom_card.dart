@@ -47,7 +47,8 @@ class _BottomCardState extends State<BottomCard> {
   void onStepCountError(error) {
     print('onStepCountError: $error');
     setState(() {
-      _steps = 'Step Count not available';
+      // Step Count not available
+      _steps = '?';
     });
   }
 
