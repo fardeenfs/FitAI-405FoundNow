@@ -80,7 +80,10 @@ function drawPose(pose) {
             //console.log(pose.keypoints);
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-            detect_pushup(pose.keypoints)
+            //detect_pushup(pose.keypoints)
+            if (score_value_detect([pose.keypoints[11], pose.keypoints[12], pose.keypoints[13], pose.keypoints[14], pose.keypoints[15], pose.keypoints[16]], 0.1)) {
+                detect_squats(pose.keypoints)
+            }
         }
     }
 }
@@ -90,6 +93,15 @@ function find_angle(A,B,C) {
     var BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
     var AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
     return Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB))*(180/Math.PI);
+}
+
+function score_value_detect(landmarks, weight) {
+    for (var i=0; i < landmarks.length; i++) {
+        if (landmarks[i].score < weight) {
+            return false
+        }
+    }
+    return true
 }
 
 function detect_pushup(keypoints) {
@@ -134,16 +146,17 @@ function detect_squats(keypoints) {
     ankle = [keypoints[15].position, keypoints[16].position]
 
     // counting reps
-    if ((find_angle(hip[0], knee[0], ankle[0]) > 160) && ((hip[1], knee[1], ankle[1]) > 160)) {
+    if ((find_angle(hip[0], knee[0], ankle[0]) > 160) || (find_angle(hip[1], knee[1], ankle[1]) > 160)) {
         if (rep) {
             counter_squats += 1
             rep = false
         }
     }
-    if ((find_angle(hip[0], knee[0], ankle[0]) < 120) && ((hip[1], knee[1], ankle[1]) < 120)) {
+    if ((find_angle(hip[0], knee[0], ankle[0]) < 120) || (find_angle(hip[1], knee[1], ankle[1]) < 120)) {
         rep = true
     }
 
+    //console.log(find_angle(hip[0], knee[0], ankle[0]), find_angle(hip[1], knee[1], ankle[1]))
     console.log(counter_squats)
 }
 
