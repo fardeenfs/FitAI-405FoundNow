@@ -212,6 +212,69 @@ function detect_dips(keypoints) {
     console.log(counter_dips)
 }
 
+function detect_plank(shoulder, hip, ankle) {
+    if (shoulder.score > 0.5 && hip.score > 0.5 && ankle.score > 0.5){
+        return true
+    }    
+    return false
+}
+ 
+function time_plank(pose){
+    let leftShoulder = pose.keypoints[5]
+    let leftHip = pose.keypoints[11]
+    let leftAnkle = pose.keypoints[15]
+ 
+    let rightShoulder = pose.keypoints[6]
+    let rightHip = pose.keypoints[12]
+    let rightAnkle = pose.keypoints[16]
+    let side = 0
+    if(detect_plank(leftShoulder, leftHip, leftAnkle)){
+        side = 1
+    } else if (detect_plank(rightShoulder, rightHip, rightAnkle)){
+        side = 2
+    }
+    var angle = 0
+ 
+    if (side == 1){
+        angle = Math.floor(find_angle(leftShoulder.position, leftHip.position, leftAnkle.position))
+    } else {
+        angle = Math.floor(find_angle(rightShoulder.position, rightHip.position, rightAnkle.position))
+    }
+   
+    if (angle > 180 && angle < 185){
+        console.log("plank")
+    } else {
+        sec = 0
+        console.log("not plank position")
+    }
+}
+ 
+function check_degree(angle){
+    if(angle > 89 && angle < 92){
+        return true
+    }
+    return false
+}
+function detect_lunges(pose){
+    let leftHip = pose.keypoints[11]
+    let leftKnee = pose.keypoints[13]
+    let leftAnkle = pose.keypoints[15]
+ 
+    let rightHip = pose.keypoints[12]
+    let rightKnee = pose.keypoints[14]
+    let rightAnkle = pose.keypoints[16]
+ 
+    left_angle = Math.floor(find_angle(leftHip.position, leftKnee.position, leftAnkle.position))
+    right_angle = Math.floor(find_angle(rightHip.position, rightKnee.position, rightAnkle.position))
+    if (check_degree(left_angle) && check_degree(right_angle)){
+        if (!check_degree(left_angle) || !check_degree(right_angle)){
+            count_lunges ++
+        }
+    }
+    console.log(count_lunges)
+}
+
+
 init();
 </script>
 </html>
