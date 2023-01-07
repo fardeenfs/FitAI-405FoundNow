@@ -1,0 +1,1 @@
+web: gunicorn HackEd2023.wsgi --log-file -
