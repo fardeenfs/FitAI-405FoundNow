@@ -6,8 +6,12 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let counter_pushup = 0;
+let counter_pushup = 0, counter_squats = 0;
 let rep = false;
+
+// parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
+// 'rightElbow', 'leftWrist', 'rightWrist', 'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 
+// 'rightAnkle'}
 
 async function init() {
     const modelURL = URL + "model.json";
@@ -119,6 +123,28 @@ function detect_pushup(keypoints) {
     }
 
     console.log(counter_pushup)
+}
+
+function detect_squats(keypoints) {
+    let hip, knee, ankle;
+
+    // front view of the camera so we use both the legs
+    hip = [keypoints[11].position, keypoints[12].position]
+    knee = [keypoints[13].position, keypoints[14].position]
+    ankle = [keypoints[15].position, keypoints[16].position]
+
+    // counting reps
+    if ((find_angle(hip[0], knee[0], ankle[0]) > 160) && ((hip[1], knee[1], ankle[1]) > 160)) {
+        if (rep) {
+            counter_squats += 1
+            rep = false
+        }
+    }
+    if ((find_angle(hip[0], knee[0], ankle[0]) < 120) && ((hip[1], knee[1], ankle[1]) < 120)) {
+        rep = true
+    }
+
+    console.log(counter_squats)
 }
 
 init();
