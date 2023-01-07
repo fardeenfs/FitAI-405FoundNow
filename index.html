@@ -6,7 +6,7 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let counter_pushup = 0, counter_squats = 0;
+let counter_pushup = 0, counter_squats = 0, counter_dips = 0;
 let rep = false;
 
 // parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
@@ -158,6 +158,58 @@ function detect_squats(keypoints) {
 
     //console.log(find_angle(hip[0], knee[0], ankle[0]), find_angle(hip[1], knee[1], ankle[1]))
     console.log(counter_squats)
+}
+
+function detect_dips(keypoints) {
+    let shoulder, elbow, wrist, direction;
+    // checking which side is visible, the elft or the right
+    if (keypoints[5].score > keypoints[6].score) {
+        shoulder = keypoints[5].position
+    } else {
+        shoulder = keypoints[6].position
+    }
+
+    // if left side is viisble then we gather left side info, otherwise we gather right side info
+    if (shoulder.part === "leftShoulder") {
+        elbow = keypoints[7].position
+        wrist = keypoints[9].position
+        direction = 'left'
+    } else {
+        elbow = keypoints[8].position
+        wrist = keypoints[10].position
+        direction = 'right'
+    }
+
+    // checking left side > shoulder should be infront of writst and elbow
+    if (direction === 'left') {
+        if ((shoulder.x > elbow.x) && (shoulder.x > wrist.x)) {
+            if (find_angle(shoulder.position, elbow.position, wrist.position) > 120) {
+                if (rep) {
+                    counter_dips += 1
+                    rep = false
+                }
+            }
+            if (find_angle(shoulder.position, elbow.position, wrist.position) < 90) {
+                rep = true
+            }
+        }
+    }
+
+    // checking right side > shoulder should be behind writst and elbow
+    if (direction === 'right') {
+        if ((shoulder.x < elbow.x) && (shoulder.x < wrist.x)) {
+            if (find_angle(shoulder.position, elbow.position, wrist.position) > 120) {
+                if (rep) {
+                    counter_dips += 1
+                    rep = false
+                }
+            }
+            if (find_angle(shoulder.position, elbow.position, wrist.position) < 90) {
+                rep = true
+            }
+        }
+    }
+    console.log(counter_dips)
 }
 
 init();
