@@ -6,7 +6,8 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let counter_pushup;
+let counter_pushup = 0;
+let rep = false;
 
 async function init() {
     const modelURL = URL + "model.json";
@@ -75,6 +76,7 @@ function drawPose(pose) {
             //console.log(pose.keypoints);
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+            detect_pushup(pose.keypoints)
         }
     }
 }
@@ -87,28 +89,32 @@ function find_angle(A,B,C) {
 }
 
 function detect_pushup(keypoints) {
-    rep = false
     
+    let shoulder, elbow, wrist;
     // checking which side is visible, the elft or the right
-    let shoulder = Math.max(keypoints[5], keypoints[6])
+    if (keypoints[5].score > keypoints[6].score) {
+        shoulder = keypoints[5]
+    } else {
+        shoulder = keypoints[6]
+    }
 
     // if left side is viisble then we gather left side info, otherwise we gather right side info
     if (shoulder.part === "leftShoulder") {
-        let elbow = keypoints[7]
-        let wrist = keypoints[9]
+        elbow = keypoints[7]
+        wrist = keypoints[9]
     } else {
-        let elbow = keypoints[8]
-        let wrist = keypoints[10]
+        elbow = keypoints[8]
+        wrist = keypoints[10]
     }
 
     // counting number of reps
-    if (find_angle(shoulder.position, elbow.position, wrist.position) > 150) {
+    if (find_angle(shoulder.position, elbow.position, wrist.position) > 120) {
         if (rep) {
             counter_pushup += 1
             rep = false
         }
     }
-    if (find_angle(shoulder.position, elbow.position, wrist.position) < 100) {
+    if (find_angle(shoulder.position, elbow.position, wrist.position) < 90) {
         rep = true
     }
 
