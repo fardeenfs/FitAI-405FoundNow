@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pedometer/pedometer.dart';
+import '../pages/main_homepage.dart';
 
 class BottomCard extends StatefulWidget {
   const BottomCard({super.key});
@@ -70,7 +71,7 @@ class _BottomCardState extends State<BottomCard> {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        padding: const EdgeInsets.symmetric(vertical: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -131,64 +132,77 @@ class _BottomCardState extends State<BottomCard> {
                     ),
                     const SizedBox(height: 15),
 // WORKOUTS CARD
-                    Container(
-                      width: width,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        color: Colors.pink[50],
-                        borderRadius: BorderRadius.circular(20),
+                    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MainHomePage(
+                                      index: 3,
+                                    )));
+                      },
+                      child: Container(
+                        width: width,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          color: Colors.pink[50],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.center,
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          color: Colors.pink[100],
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 20,
+                                        top: 10,
+                                        child: Image.asset(
+                                          'lib/icons/weight lifting.png',
+                                          height: 35,
+                                          width: 35,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Workouts',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        '40 mins',
+                                        style: TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 14),
+                                      ),
+                                    ],
+                                  )
+                                ])),
                       ),
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.pink[100],
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 20,
-                                      top: 10,
-                                      child: Image.asset(
-                                        'lib/icons/weight lifting.png',
-                                        height: 35,
-                                        width: 35,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Text(
-                                      'Workouts',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      '40 mins',
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 14),
-                                    ),
-                                  ],
-                                )
-                              ])),
                     ),
                   ],
                 ),

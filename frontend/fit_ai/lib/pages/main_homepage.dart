@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 
 import '../pages/home_page.dart';
+import '../pages/habit_page.dart';
 import '../pages/login_page.dart';
+import '../pages/explore_page.dart';
 
 class MainHomePage extends StatefulWidget {
-  const MainHomePage({super.key});
+  final int index;
+  const MainHomePage({super.key, required this.index});
 
   @override
   State<MainHomePage> createState() => _MainHomePageState();
 }
 
 class _MainHomePageState extends State<MainHomePage> {
-  final _pages = [const HomePage(), LoginPage(), LoginPage(), LoginPage()];
-  var currentindex = 0;
+  final _pages = [
+    const HomePage(),
+    const HabbitPage(),
+    LoginPage(),
+    ExplorePage(),
+  ];
+  int currentindex = 0;
+  void initState() {
+    super.initState();
+    currentindex = widget.index;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +44,7 @@ class _MainHomePageState extends State<MainHomePage> {
               BottomNavigationBarItem(
                   icon: Icon(Icons.analytics_outlined), label: 'Report'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.settings_outlined), label: 'Settings'),
+                  icon: Icon(Icons.fitness_center_outlined), label: 'Explore'),
             ]));
   }
 }

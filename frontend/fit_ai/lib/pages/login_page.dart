@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import '../utils/bottom_navbar.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,9 +16,36 @@ class _LoginPageState extends State<LoginPage> {
 
   final passwordController = TextEditingController();
 
-  void submitButton() {
-    print(passwordController.text);
-    print(usernameController.text);
+  void signup(String email, String password) async {
+    Map data = {'email': email, 'password': password};
+
+    String body = json.encode(data);
+
+    Response response = await post(
+      Uri.parse('https://hacked2023.herokuapp.com/users/register/'),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+
+    if (response.statusCode == 201) {
+      print('User created successfully.');
+    } else {
+      print(response.statusCode);
+    }
+    ;
+  }
+
+  void login(String email, String password) async {
+    Map data = {'email': email, 'password': password};
+
+    String body = json.encode(data);
+
+    Response response = await post(
+      Uri.parse('https://hacked2023.herokuapp.com/users/token/obtain/'),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+    print(response.body);
   }
 
   @override
@@ -53,7 +82,25 @@ class _LoginPageState extends State<LoginPage> {
                 )),
             const SizedBox(height: 20),
             MaterialButton(
-                onPressed: submitButton,
+                onPressed: () =>
+                    signup(usernameController.text, passwordController.text),
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Container(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade400,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Center(
+                            child: Text('Sign Up',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)))))),
+            const SizedBox(height: 20),
+            MaterialButton(
+                onPressed: () =>
+                    login(usernameController.text, passwordController.text),
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(

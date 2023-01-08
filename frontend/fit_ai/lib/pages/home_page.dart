@@ -22,44 +22,50 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
           child: ListView(
         children: [
-          Column(children: [
-            const ProfileSection(
-                name: 'Shelly Marsh',
-                greeting: 'Good Morning!',
-                image: 'lib/images/profile.png'),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 200,
-              child: PageView(
-                scrollDirection: Axis.horizontal,
-                controller: _controller,
-                children: const [
-                  HomeCard(
-                      title1: 'Set Your',
-                      title2: 'Workout Plan',
-                      subtitle: 'Training & Nutrition',
-                      image: 'lib/images/bottle.png'),
-                  HomeCard(
-                      title1: 'Set Your',
-                      title2: 'Workout Plan',
-                      subtitle: 'Training & Nutrition',
-                      image: 'lib/images/treadmill.png'),
-                  HomeCard(
-                      title1: 'Set Your',
-                      title2: 'Workout Plan',
-                      subtitle: 'Training & Nutrition',
-                      image: 'lib/images/dumbbell.png')
-                ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: Column(children: [
+              const ProfileSection(
+                  name: 'Shelly Marsh',
+                  greeting: 'Good Morning!',
+                  image: 'lib/images/profile.png'),
+              const SizedBox(
+                height: 20,
               ),
-            ),
-            SmoothPageIndicator(
-                controller: _controller,
-                count: 3,
-                effect: ExpandingDotsEffect()),
-            BottomCard()
-          ])
+              Container(
+                height: 200,
+                child: PageView(
+                  scrollDirection: Axis.horizontal,
+                  controller: _controller,
+                  children: const [
+                    HomeCard(
+                        title1: 'Set Your',
+                        title2: 'Workout Plan',
+                        subtitle: 'Training & Nutrition',
+                        image: 'lib/images/bottle.png'),
+                    HomeCard(
+                        title1: 'Set Your',
+                        title2: 'Workout Plan',
+                        subtitle: 'Training & Nutrition',
+                        image: 'lib/images/treadmill.png'),
+                    HomeCard(
+                        title1: 'Set Your',
+                        title2: 'Workout Plan',
+                        subtitle: 'Training & Nutrition',
+                        image: 'lib/images/dumbbell.png')
+                  ],
+                ),
+              ),
+              SmoothPageIndicator(
+                  controller: _controller,
+                  count: 3,
+                  effect: ExpandingDotsEffect(
+                      dotHeight: 10,
+                      dotWidth: 10,
+                      activeDotColor: Colors.lightBlue)),
+              BottomCard()
+            ]),
+          )
         ],
       )),
     );
