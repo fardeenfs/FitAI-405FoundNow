@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pedometer/pedometer.dart';
 import '../pages/main_homepage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:fit_ai/data/workout_database.dart';
 
 class BottomCard extends StatefulWidget {
   const BottomCard({super.key});
@@ -12,6 +14,9 @@ class BottomCard extends StatefulWidget {
 }
 
 class _BottomCardState extends State<BottomCard> {
+  final _myBox = Hive.box("WorkoutDb");
+  workoutDb db = workoutDb();
+  late int time = 40;
   final double width = 160;
   late Stream<StepCount> _stepCountStream;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
@@ -20,6 +25,10 @@ class _BottomCardState extends State<BottomCard> {
   @override
   void initState() {
     super.initState();
+    db.loadData();
+    if (db.todayWorkoutList[0][1] != null) {
+      time = db.todayWorkoutList[0][1];
+    }
     initPlatformState();
   }
 
@@ -85,7 +94,6 @@ class _BottomCardState extends State<BottomCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 // DAILY REPORT CARD
-
                     MaterialButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
@@ -196,17 +204,17 @@ class _BottomCardState extends State<BottomCard> {
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
-                                      Text(
+                                    children: [
+                                      const Text(
                                         'Workouts',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       Text(
-                                        '40 mins',
-                                        style: TextStyle(
+                                        '${time} mins',
+                                        style: const TextStyle(
                                             color: Colors.grey,
                                             fontWeight: FontWeight.normal,
                                             fontSize: 14),

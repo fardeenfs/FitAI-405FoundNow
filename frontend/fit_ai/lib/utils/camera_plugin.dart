@@ -23,6 +23,7 @@ class _CameraPluginState extends State<CameraPlugin> {
   final workoutDb db = workoutDb();
 
   final _myBox = Hive.box("WorkoutDb");
+  late int previous = 0;
   void initialise() {
     _stopwatch = Stopwatch();
     _stopwatch.start();
@@ -34,14 +35,15 @@ class _CameraPluginState extends State<CameraPlugin> {
     }
   }
 
-  void addReps(String pose) {
-    if (double.parse(pose) != null) {
+  void addReps(String poseE) {
+    if (isNumeric(poseE) && int.parse(poseE) > previous) {
       setState(() {
-        db.todayWorkoutList[0][0] +=
-            double.parse(pose); // incrementing the REPS of workouts
+        print('Storage ${db.todayWorkoutList[0][0]}');
+        db.todayWorkoutList[0][0] += 1; // incrementing the REPS of workouts
         db.todayWorkoutList[0][2] +=
-            ((double.parse(pose) * 8 * 68) / 20) * 0.175;
+            (((int.parse(poseE) * 8 * 68) / 20) * 0.175).floor();
         db.todayWorkoutList[0][3] = 0;
+        previous = int.parse(poseE);
         db.updateDatabase();
       });
     }
@@ -100,12 +102,14 @@ class _CameraPluginState extends State<CameraPlugin> {
                                 path: widget.path,
                                 results: (res) {
                                   var resp = res;
+                                  print(res);
                                   setState(() {
                                     if (isNumeric(resp)) {
                                       pose = resp;
-                                      addReps(pose);
+                                      addReps(resp);
                                     } else {
                                       pose = pose;
+                                      // addReps(resp);
                                     }
                                   });
                                 },
