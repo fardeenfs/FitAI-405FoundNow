@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from django.forms import model_to_dict
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import views
 from rest_framework.permissions import AllowAny
@@ -31,12 +33,44 @@ class WorkoutActivityTrackView(views.APIView):
     def get(self, request):
         email = request.user.email
         user_id = UserProfile.objects.get(email=email).id
-        data = WorkoutActivityTrack.objects.filter(
-            workout_date__gte=datetime.now() - timedelta(days=7),
-            workout_date__lt=datetime.now(), user_id=user_id
-        )
-        serializer = self.serializer_class(data, many=True)
-        return Response(serializer.data)
+        now = datetime.now()
+        start_date = now - timedelta(days=6)
+        end_date = now - timedelta(days=1)
+        data_set = []
+        while start_date != end_date:
+            data = WorkoutActivityTrack.objects.filter(
+                workout_date=start_date, user_id=user_id, workout_type_id=0
+            )
+            if len(data) > 0:
+                data = model_to_dict(data[0])
+                data.pop("user_id")
+                data.pop("id")
+                data_set.append(data)
+            else:
+                empty_set = {"workout_type_id": 0,
+                             "workout_count": 0,
+                             "workout_date": start_date.strftime('%Y-%m-%d'),
+                             "calorie_burnt": 0,
+                             "mins": 0}
+                data_set.append(empty_set)
+            data = WorkoutActivityTrack.objects.filter(
+                workout_date=start_date, user_id=user_id, workout_type_id=1
+            )
+            if len(data) > 0:
+                data = model_to_dict(data[0])
+                data.pop("user_id")
+                data.pop("id")
+                data_set.append(data)
+            else:
+                empty_set = {"workout_type_id": 1,
+                             "workout_count": 0,
+                             "workout_date": start_date.strftime('%Y-%m-%d'),
+                             "calorie_burnt": 0,
+                             "mins": 0}
+                data_set.append(empty_set)
+            start_date += timedelta(days=1)
+        # serializer = self.serializer_class(data, many=True)
+        return JsonResponse(data_set,safe=False)
 
     def post(self, request):
         email = request.user.email
@@ -44,9 +78,9 @@ class WorkoutActivityTrackView(views.APIView):
         data = request.data.copy()
         data["user_id"] = user_id
         data['calorie_burnt'] = 1
+        data['mins'] = 1
         post_serializer = self.serializer_class(data=data)
         if post_serializer.is_valid():
             post_serializer.save()
             return Response(post_serializer.data)
         return Response(status=HTTP_400_BAD_REQUEST, data={'errors': post_serializer.errors})
-
