@@ -6,7 +6,7 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let sec = 0
+let time = 0;
 
 // parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
 // 'rightElbow', 'leftWrist', 'rightWrist', 'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 
@@ -76,7 +76,7 @@ function drawPose(pose) {
         // draw the keypoints and skeleton
         if (pose) {
             const minPartConfidence = 0.5;
-            console.log(pose.keypoints);
+            time_plank(pose)
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
         }
@@ -97,7 +97,7 @@ function between(x, min, max) {
 function detect_plank(wrist, shoulder, hip, ankle) {
     // check for correct plank form
     // return: boolean true if correct form
-    if (shoulder.score > 0.5 && hip.score > 0.5 && ankle.score > 0.5){
+    if (shoulder.score > 0.2 && hip.score > 0.2 && ankle.score > 0.2 && wrist.score > 0.2){
         if (between(wrist.position.y, ankle.position.y - 30, ankle.position.y + 30)){
             return true
         }
@@ -105,18 +105,30 @@ function detect_plank(wrist, shoulder, hip, ankle) {
     return false
 }
  
+function timeCount() {
+    const minutes = Math.floor(time/60);
+    let seconds = time % 60;
+
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    time++;
+    console.log(`${minutes}:${seconds}`)
+}
+
 function time_plank(pose){
+    let leftWrist = pose.keypoints[9]
     let leftShoulder = pose.keypoints[5]
     let leftHip = pose.keypoints[11]
     let leftAnkle = pose.keypoints[15]
- 
+    
+    let rightWrist = pose.keypoints[10]
     let rightShoulder = pose.keypoints[6]
     let rightHip = pose.keypoints[12]
     let rightAnkle = pose.keypoints[16]
+
     let side = 0
-    if(detect_plank(leftShoulder, leftHip, leftAnkle)){
+    if(detect_plank(leftWrist, leftShoulder, leftHip, leftAnkle)){
         side = 1
-    } else if (detect_plank(rightShoulder, rightHip, rightAnkle)){
+    } else if (detect_plank(rightWrist, rightShoulder, rightHip, rightAnkle)){
         side = 2
     }
     var angle = 0
@@ -127,8 +139,9 @@ function time_plank(pose){
         angle = Math.floor(find_angle(rightShoulder.position, rightHip.position, rightAnkle.position))
     }
    
-    if (angle > 175 && angle < 185){
+    if (angle > 179 && angle < 182){
         console.log("plank")
+        console.log(setInterval(timeCount, 1000));
     } else {
         sec = 0
         console.log("not plank position")
