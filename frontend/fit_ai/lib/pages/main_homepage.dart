@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../pages/home_page.dart';
 import '../pages/habit_page.dart';
-import '../pages/login_page.dart';
+import '../pages/report_page.dart';
 import '../pages/explore_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class MainHomePage extends StatefulWidget {
   final int index;
@@ -14,11 +15,12 @@ class MainHomePage extends StatefulWidget {
 }
 
 class _MainHomePageState extends State<MainHomePage> {
+  final _myBox = Hive.box("WorkoutDb");
   final _pages = [
-    const HomePage(),
+    HomePage(),
     const HabbitPage(),
-    LoginPage(),
-    ExplorePage(),
+    const ReportPage(),
+    const ExplorePage(),
   ];
   int currentindex = 0;
   void initState() {

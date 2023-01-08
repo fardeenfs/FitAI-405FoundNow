@@ -14,6 +14,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = PageController();
+  String greeting() {
+    if (DateTime.now().hour > 12) {
+      return 'Good Afternoon!';
+    } else if (DateTime.now().hour > 17) {
+      return 'Good Evening!';
+    } else {
+      return 'Good Morning!';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +32,11 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(children: [
-              const ProfileSection(
+              ProfileSection(
                   name: 'Shelly Marsh',
-                  greeting: 'Good Morning!',
+                  greeting: greeting(),
                   image: 'lib/images/profile.png'),
               const SizedBox(
                 height: 20,

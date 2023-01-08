@@ -1,3 +1,44 @@
+import 'package:intl/intl.dart';
+
+List<String> past7FullDates() {
+  final now = DateTime.now();
+  final formatter = DateFormat('dd-MM-yyyy'); // Use 'dd-MM-yyyy' format
+
+  final past7Days = List.generate(7, (i) => now.subtract(Duration(days: i)));
+
+  return past7Days
+      .map((date) => formatter.format(date))
+      .toList()
+      .reversed
+      .toList();
+}
+
+List<int> past7Dates() {
+  final now = DateTime.now();
+  final formatter = DateFormat('dd');
+
+  final past7datess = List.generate(7, (i) => now.subtract(Duration(days: i)));
+
+  return past7datess
+      .map((date) => int.parse(formatter.format(date)))
+      .toList()
+      .reversed
+      .toList();
+}
+
+List<String> past7Days() {
+  final now = DateTime.now();
+  final formatter = DateFormat.E();
+
+  final past7Days = List.generate(7, (i) => now.subtract(Duration(days: i)));
+
+  return past7Days
+      .map((date) => formatter.format(date))
+      .toList()
+      .reversed
+      .toList();
+}
+
 // return todays date formatted as yyyymmdd
 String todaysDateFormatted() {
   // today

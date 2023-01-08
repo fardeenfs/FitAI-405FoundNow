@@ -23,6 +23,12 @@ class _TeachableState extends State<Teachable> {
       allowsInlineMediaPlayback: true,
     ),
   );
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return double.parse(s) != null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,21 +40,26 @@ class _TeachableState extends State<Teachable> {
           ),
         ),
         onConsoleMessage: (controller, consoleMessage) {
-          print("CONSOLE MESSAGE: " + consoleMessage.message);
+          if (isNumeric(consoleMessage.message)) {
+            widget.results!(consoleMessage.message);
+          } else {
+            widget.results!('error');
+          }
         },
-        onWebViewCreated: (InAppWebViewController controller) async {
-          var _webViewController = controller;
-          _webViewController.addJavaScriptHandler(
-              handlerName: "updater",
-              callback: (args) {
-                List predictions = args[0];
-                Map<String, double> mp = new Map();
-                predictions.forEach((element) {
-                  mp[element["className"]] = element["probability"];
-                });
-                widget.results!(JsonEncoder().convert(mp));
-              });
-        },
+        // onWebViewCreated: (InAppWebViewController controller) async {
+        //   var _webViewController = controller;
+        //   _webViewController.addJavaScriptHandler(
+        //       handlerName: "updater",
+        //       callback: (args) {
+        //         List predictions = args[0];
+        //         Map<String, double> mp = new Map();
+        //         predictions.forEach((element) {
+        //           mp[element["className"]] = element["probability"];
+        //         });
+        //         widget.results!(JsonEncoder().convert(mp));
+        //       }
+        //       );
+        // },
         androidOnPermissionRequest: (InAppWebViewController controller,
             String origin, List<String> resources) async {
           return PermissionRequestResponse(

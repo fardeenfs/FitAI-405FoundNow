@@ -86,49 +86,61 @@ class _BottomCardState extends State<BottomCard> {
                   children: [
 // DAILY REPORT CARD
 
-                    Container(
-                      width: width,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(20),
+                    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MainHomePage(
+                                      index: 2,
+                                    )));
+                      },
+                      child: Container(
+                        width: width,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Daily Report',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: const BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.blue,
+                                            blurRadius: 0,
+                                            spreadRadius: 0,
+                                          )
+                                        ],
+                                        color: Colors.blue,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(Icons.arrow_forward,
+                                          size: 15, color: Colors.white),
+                                    )
+                                  ],
+                                )
+                              ],
+                            )),
                       ),
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Daily Report',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: const BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.blue,
-                                          blurRadius: 0,
-                                          spreadRadius: 0,
-                                        )
-                                      ],
-                                      color: Colors.blue,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(Icons.arrow_forward,
-                                        size: 15, color: Colors.white),
-                                  )
-                                ],
-                              )
-                            ],
-                          )),
                     ),
                     const SizedBox(height: 15),
 // WORKOUTS CARD

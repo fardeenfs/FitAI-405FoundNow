@@ -40,6 +40,9 @@ dependencies:
   flutter_slidable: ^2.0.0
   flutter_heatmap_calendar: ^1.0.5
   flutter_inappwebview: ^5.7.2+3
+  percent_indicator: ^4.0.1
+  syncfusion_flutter_charts: ^20.4.42
+  intl: ^0.17.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -66,6 +69,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - assets/
     - lib/images/
     - lib/icons/
   # To add assets to your application, add an assets section, like this:

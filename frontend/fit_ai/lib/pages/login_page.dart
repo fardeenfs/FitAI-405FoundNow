@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import '../utils/bottom_navbar.dart';
+import '../pages/main_homepage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../pages/more_info.dart';
+import '../pages/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});
@@ -15,6 +18,8 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
 
   final passwordController = TextEditingController();
+
+  final _myBox = Hive.box("WorkoutDb");
 
   void signup(String email, String password) async {
     Map data = {'email': email, 'password': password};
@@ -29,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.statusCode == 201) {
       print('User created successfully.');
+      login(email, password);
     } else {
       print(response.statusCode);
     }
@@ -45,7 +51,38 @@ class _LoginPageState extends State<LoginPage> {
       headers: {"Content-Type": "application/json"},
       body: body,
     );
-    print(response.body);
+    if (response.statusCode == 200) {
+      _myBox.put('token', jsonDecode(response.body)['access']);
+      _myBox.put(
+          "Authorization", "Bearer ${jsonDecode(response.body)['access']}");
+    }
+    // Response response2 = await get(
+    //   Uri.parse('https://hacked2023.herokuapp.com/users/user-profile/'),
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": _myBox.get('Authorization')
+    //   },
+    // );
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => const MainHomePage(
+                index: 0,
+              )),
+    );
+    // print('CHECK PROFILE ' + response2.body);
+    // if (response2.statusCode == 200) {
+    //   print('User logged in successfully.');
+    //   // ignore: use_build_context_synchronously
+
+    // } else {
+    //   // ignore: use_build_context_synchronously
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => const MoreInfo()),
+    //   );
+    // }
   }
 
   @override
@@ -114,6 +151,8 @@ class _LoginPageState extends State<LoginPage> {
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold)))))),
+            const SizedBox(height: 20),
+            const Text('Please sign up and then login if you are a new user!'),
           ])
         ])));
   }
