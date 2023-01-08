@@ -114,18 +114,28 @@ function timeCount() {
     console.log(`${minutes}:${seconds}`)
 }
 
+function check_pose(ear, shoulder, hip){
+    if (check_degree){
+        return true
+    }
+    return false
+}
+
 function time_plank(pose){
+    let leftEar = pose.keypoints[3]
     let leftWrist = pose.keypoints[9]
     let leftShoulder = pose.keypoints[5]
     let leftHip = pose.keypoints[11]
     let leftAnkle = pose.keypoints[15]
     
+    let rightEar = pose.keypoints[4]
     let rightWrist = pose.keypoints[10]
     let rightShoulder = pose.keypoints[6]
     let rightHip = pose.keypoints[12]
     let rightAnkle = pose.keypoints[16]
 
     let side = 0
+    let ear, shoulder, hip
     if(detect_plank(leftWrist, leftShoulder, leftHip, leftAnkle)){
         side = 1
     } else if (detect_plank(rightWrist, rightShoulder, rightHip, rightAnkle)){
@@ -134,16 +144,26 @@ function time_plank(pose){
     var angle = 0
  
     if (side == 1){
+        ear = leftEar
+        shoulder = leftShoulder
+        hip = leftHip
         angle = Math.floor(find_angle(leftShoulder.position, leftHip.position, leftAnkle.position))
     } else {
+        ear = rightEar
+        shoulder = rightShoulder
+        hip = rightHip
         angle = Math.floor(find_angle(rightShoulder.position, rightHip.position, rightAnkle.position))
     }
    
     if (angle > 179 && angle < 182){
-        console.log("plank")
-        console.log(setInterval(timeCount, 1000));
+        if(check_pose(ear, shoulder, hip)){
+            console.log("plank")
+            console.log(setInterval(timeCount, 1000));
+        } else {
+            console.log("Back is not straight.")
+        }
     } else {
-        console.log("not plank position")
+        console.log("not plank position.")
     }
 }
 
