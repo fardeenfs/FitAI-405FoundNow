@@ -6,8 +6,10 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let counter_pushup = 0, counter_squats = 0, counter_dips = 0, counter_lunges = 0;
-let rep = false;
+let counter_lunges = 0;
+let left_lunges = 0;
+let right_lunges = 0;
+let rep = false
 
 // parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
 // 'rightElbow', 'leftWrist', 'rightWrist', 'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 
@@ -77,7 +79,7 @@ function drawPose(pose) {
         // draw the keypoints and skeleton
         if (pose) {
             const minPartConfidence = 0.5;
-            console.log(pose.keypoints);
+            detect_lunges(pose)
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
         }
@@ -92,26 +94,56 @@ function find_angle(A,B,C) {
 }
  
 function check_degree(angle){
-    if(angle > 89 && angle < 92){
+    if(angle > 85 && angle < 95){
         return true
     }
     return false
 }
+
+function check_pose(ear, shoulder, hip){
+    if (check_degree){
+        return true
+    }
+    console.log("Back is not straight.")
+    return false
+}
+
 function detect_lunges(pose){
+    let leftEar = pose.keypoints[3]
+    let leftShoulder = pose.keypoints[5]
     let leftHip = pose.keypoints[11]
     let leftKnee = pose.keypoints[13]
     let leftAnkle = pose.keypoints[15]
  
+    let rightEar = pose.keypoints[4]
+    let rightShoulder = pose.keypoints[6]
     let rightHip = pose.keypoints[12]
     let rightKnee = pose.keypoints[14]
     let rightAnkle = pose.keypoints[16]
  
     left_angle = Math.floor(find_angle(leftHip.position, leftKnee.position, leftAnkle.position))
     right_angle = Math.floor(find_angle(rightHip.position, rightKnee.position, rightAnkle.position))
-    if (check_degree(left_angle)){
-        if (!check_degree(left_angle) || !check_degree(right_angle)){
-            counter_lunges ++
+    if (check_degree(left_angle) && check_degree(right_lunges) && leftKnee.position.y > rightKnee.position.y){
+        if (check_pose(leftEar, leftShoulder, leftHip) || check_pose(rightEar, rightShoulder, rightHip)){
+            left_lunges ++;
         }
+    }
+    if (check_degree(left_angle) && check_degree(right_lunges) && rightKnee.position.y > leftKnee.position.y){
+        if (check_pose(leftEar, leftShoulder, leftHip) || check_pose(rightEar, rightShoulder, rightHip)){
+            right_lunges ++;
+        }
+    }
+
+    if (left_lunges > 1 || right_lunges > 1) {
+        console.log("Please do both sides to finish one rep")
+        left_lunges = 0
+        right_lunges = 0
+        if(rep){
+            counter_lunges ++;
+            rep = false
+        }
+    } else if(left_lunges == right_lunges){
+        rep = true;
     }
     console.log(counter_lunges)
 }
