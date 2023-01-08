@@ -94,7 +94,6 @@ class _ReportPageState extends State<ReportPage> {
     SalesData(DateTime(2010, 1, 5), 322),
     SalesData(DateTime(2010, 1, 6), 500),
     SalesData(DateTime(2010, 1, 7), 842),
-    SalesData(DateTime(2010, 1, 8), 412),
   ];
 
   @override
