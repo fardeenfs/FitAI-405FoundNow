@@ -6,8 +6,7 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let counter_pushup = 0, counter_squats = 0, counter_dips = 0, counter_lunges = 0;
-let rep = false;
+let sec = 0
 
 // parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
 // 'rightElbow', 'leftWrist', 'rightWrist', 'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 
@@ -96,6 +95,8 @@ function between(x, min, max) {
 }
 
 function detect_plank(wrist, shoulder, hip, ankle) {
+    // check for correct plank form
+    // return: boolean true if correct form
     if (shoulder.score > 0.5 && hip.score > 0.5 && ankle.score > 0.5){
         if (between(wrist.position.y, ankle.position.y - 30, ankle.position.y + 30)){
             return true
@@ -126,7 +127,7 @@ function time_plank(pose){
         angle = Math.floor(find_angle(rightShoulder.position, rightHip.position, rightAnkle.position))
     }
    
-    if (angle > 180 && angle < 185){
+    if (angle > 175 && angle < 185){
         console.log("plank")
     } else {
         sec = 0
