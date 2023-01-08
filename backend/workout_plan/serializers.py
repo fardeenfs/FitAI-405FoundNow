@@ -10,6 +10,7 @@ class WorkoutActivityTrackSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class WorkoutTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkoutType
