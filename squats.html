@@ -73,9 +73,12 @@ function drawPose(pose) {
         // draw the keypoints and skeleton
         if (pose) {
             const minPartConfidence = 0.5;
-            console.log(pose.keypoints);
+            //console.log(pose.keypoints);
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+            if (score_value_detect([pose.keypoints[11], pose.keypoints[13], pose.keypoints[15]], 0.2) || score_value_detect([pose.keypoints[12], pose.keypoints[14], pose.keypoints[16]], 0.2)) {
+                detect_squats(pose.keypoints)
+            }
         }
     }
 }
@@ -105,24 +108,30 @@ function detect_squats(keypoints) {
     let hip, knee, ankle;
     let position_detect = false; // this will check if the user is in the correct position or not
 
+    let strength = 0;
+
+    if (keypoints[13].score < keypoints[14].score) {
+        strength = 1
+    }
+
     // front view of the camera so we use both the legs
     hip = [keypoints[11].position, keypoints[12].position]
     knee = [keypoints[13].position, keypoints[14].position]
     ankle = [keypoints[15].position, keypoints[16].position]
 
-    if (between(ankle[0].position.y, ankle[1].position.y-15, ankle[1].position.y+15)){ // both the feet are in same level
+    if (between(ankle[0].y, ankle[1].y-15, ankle[1].y+15)){ // both the feet are in same level
         position_detect = true;
     }
 
     // counting reps
     if (position_detect) {
-        if ((find_angle(hip[0], knee[0], ankle[0]) > 160) || (find_angle(hip[1], knee[1], ankle[1]) > 165)) {
+        if ((find_angle(hip[strength], knee[strength], ankle[strength]) > 165)) {
             if (rep) {
                 counter_squats += 1
                 rep = false
             }
         }
-        if ((find_angle(hip[0], knee[0], ankle[0]) < 120) || (find_angle(hip[1], knee[1], ankle[1]) < 120)) {
+        if ((find_angle(hip[strength], knee[strength], ankle[strength]) < 120)) {
             rep = true
         }
 
