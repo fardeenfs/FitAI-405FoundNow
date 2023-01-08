@@ -1,0 +1,145 @@
+<div><canvas id="canvas"
+    style="position:fixed;min-height:100%;min-width:100%;height:100%;width:100%;top:0%;left:0%;resize:none;"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+<script type="text/javascript">
+const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
+let model, webcam, ctx, labelContainer, maxPredictions;
+let counter_pushup = 0;
+let rep = false;
+
+async function init() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
+    model = await tmPose.load(modelURL, metadataURL);
+
+    maxPredictions = model.getTotalClasses();
+
+    // Convenience function to setup a webcam
+    const size = 600;
+    const flip = true; // whether to flip the webcam
+    webcam = new tmPose.Webcam(size, size, flip); // width, height, flip
+    await webcam.setup(); // request access to the webcam
+    await webcam.play();
+    window.requestAnimationFrame(loop);
+
+    // append/get elements to the DOM
+    const canvas = document.getElementById("canvas");
+    canvas.width = size; canvas.height = size;
+    ctx = canvas.getContext("2d");
+}
+
+async function loop(timestamp) {
+    webcam.update(); // update the webcam frame
+    await predict();
+    window.requestAnimationFrame(loop);
+}
+
+async function predict() {
+    // Prediction #1: run input through posenet
+    // estimatePose can take in an image, video or canvas html element
+    const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+    // Prediction 2: run input through teachable machine classification model
+    const prediction = await model.predict(posenetOutput);
+
+    let ans = 0, score = 0;
+    for (let i = 0; i < maxPredictions; i++) {
+        if (prediction[i].probability.toFixed(2) > score) {
+            score = prediction[i].probability.toFixed(2);
+            ans = prediction[i].className;
+        }
+    }
+
+    // finally draw the poses
+    drawPose(pose);
+
+    try {
+        // Code to run
+        //  updater(ans,score);
+        window.flutter_inappwebview.callHandler('updater', prediction);
+        //  [break;]
+    }
+
+    catch (e) {
+        // Code to run if an exception occurs
+        //  [break;]
+    }
+}
+
+function drawPose(pose) {
+    if (webcam.canvas) {
+        ctx.drawImage(webcam.canvas, 0, 0);
+        // draw the keypoints and skeleton
+        if (pose) {
+            const minPartConfidence = 0.5;
+            console.log(pose.keypoints);
+            tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+            tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+        }
+    }
+}
+
+function find_angle(A,B,C) {
+    var AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
+    var BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
+    var AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
+    return Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB))*(180/Math.PI);
+}
+
+function between(x, min, max) {
+  return x >= min && x <= max;
+}
+
+function detect_pushup(keypoints) {
+    
+    let shoulder, elbow, wrist, ankle, hip;
+    let position_detect = false; // this will check if the user is in the correct position or not
+
+    // checking which side is visible, the elft or the right
+    if (keypoints[5].score > keypoints[6].score) {
+        shoulder = keypoints[5]
+    } else {
+        shoulder = keypoints[6]
+    }
+
+    // if left side is viisble then we gather left side info, otherwise we gather right side info
+    if (shoulder.part === "leftShoulder") {
+        elbow = keypoints[7]
+        wrist = keypoints[9]
+        ankle = keypoints[15]
+        hip = keypoints[11]
+    } else {
+        elbow = keypoints[8]
+        wrist = keypoints[10]
+        ankle = keypoints[16]
+        hip = keypoints[12]
+    }
+
+    if (between(wrist.position.y, ankle.position.y-30, ankle.position.y+30)) { // wrist and ankle are in level
+        if (between(find_angle(shoulder.position, hip.position, ankle.position)), 160, 200) { // body is straight
+            position_detect = true;
+        }
+        else {
+            console.log("Hip are too high.")
+        }
+    }
+
+    if (position_detect) {
+        // counting number of reps
+        if (find_angle(shoulder.position, elbow.position, wrist.position) > 120) {
+            if (rep) {
+                counter_pushup += 1
+                rep = false
+            }
+        }
+        if (find_angle(shoulder.position, elbow.position, wrist.position) < 90) {
+            rep = true
+        }
+
+        console.log(counter_pushup)
+    }
+}
+init();
+</script>
+</html>
