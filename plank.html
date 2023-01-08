@@ -6,7 +6,7 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let sec = 0
+let time = 0;
 
 // parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
 // 'rightElbow', 'leftWrist', 'rightWrist', 'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 
@@ -104,6 +104,15 @@ function detect_plank(wrist, shoulder, hip, ankle) {
     }    
     return false
 }
+
+function timeCount() {
+    const minutes = Math.floor(time/60);
+    let seconds = time % 60;
+
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    time++;
+    return '${minutes}:${seconds}'
+}
  
 function time_plank(pose){
     let leftShoulder = pose.keypoints[5]
@@ -129,11 +138,13 @@ function time_plank(pose){
    
     if (angle > 175 && angle < 185){
         console.log("plank")
+        console.log(setInterval(timeCount, 1000));
     } else {
-        sec = 0
         console.log("not plank position")
     }
 }
+
+console.log(setInterval(timeCount, 1000));
 
 init();
 </script>
