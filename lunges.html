@@ -7,8 +7,6 @@
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 let counter_lunges = 0;
-let left_lunges = 0;
-let right_lunges = 0;
 let rep = false
 
 // parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
@@ -123,28 +121,16 @@ function detect_lunges(pose){
  
     left_angle = Math.floor(find_angle(leftHip.position, leftKnee.position, leftAnkle.position))
     right_angle = Math.floor(find_angle(rightHip.position, rightKnee.position, rightAnkle.position))
-    if (check_degree(left_angle) && check_degree(right_lunges) && leftKnee.position.y > rightKnee.position.y){
-        if (check_pose(leftEar, leftShoulder, leftHip) || check_pose(rightEar, rightShoulder, rightHip)){
-            left_lunges ++;
-        }
-    }
-    if (check_degree(left_angle) && check_degree(right_lunges) && rightKnee.position.y > leftKnee.position.y){
-        if (check_pose(leftEar, leftShoulder, leftHip) || check_pose(rightEar, rightShoulder, rightHip)){
-            right_lunges ++;
-        }
-    }
-
-    if (left_lunges > 1 || right_lunges > 1) {
-        console.log("Please do both sides to finish one rep")
-        left_lunges = 0
-        right_lunges = 0
-        if(rep){
-            counter_lunges ++;
+    if ((left_angle > 160) && (right_angle > 160)) {
+        if (rep) {
+            counter_lunges += 1
             rep = false
         }
-    } else if(left_lunges == right_lunges){
-        rep = true;
     }
+    if ((left_angle < 120) || (right_angle < 120)) {
+        rep = true
+    }
+
     console.log(counter_lunges)
 }
 
