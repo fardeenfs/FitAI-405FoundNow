@@ -76,7 +76,7 @@ function drawPose(pose) {
         // draw the keypoints and skeleton
         if (pose) {
             const minPartConfidence = 0.5;
-            console.log(pose.keypoints);
+            //console.log(pose.keypoints);
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
         }
@@ -111,7 +111,7 @@ function timeCount() {
 
     seconds = seconds < 10 ? '0' + seconds : seconds;
     time++;
-    return '${minutes}:${seconds}'
+    console.log(`${minutes}:${seconds}`)
 }
  
 function time_plank(pose){
@@ -143,8 +143,6 @@ function time_plank(pose){
         console.log("not plank position")
     }
 }
-
-console.log(setInterval(timeCount, 1000));
 
 init();
 </script>
