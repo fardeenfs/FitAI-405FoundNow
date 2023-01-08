@@ -91,9 +91,15 @@ function find_angle(A,B,C) {
     return Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB))*(180/Math.PI);
 }
 
-function detect_plank(shoulder, hip, ankle) {
+function between(x, min, max) {
+  return x >= min && x <= max;
+}
+
+function detect_plank(wrist, shoulder, hip, ankle) {
     if (shoulder.score > 0.5 && hip.score > 0.5 && ankle.score > 0.5){
-        return true
+        if (between(wrist.position.y, ankle.position.y - 30, ankle.position.y + 30)){
+            return true
+        }
     }    
     return false
 }
