@@ -125,11 +125,14 @@ function detect_dips(keypoints) {
         ankle = keypoints[16]
         knee = keypoints[14]
     }
-
-    if (between(find_angle(hip.position, knee.position, ankle.position), 160, 200)) {
-        position_detect = true
+    if (score_value_detect([hip, knee, ankle], 0.4)) {
+        if (!between(find_angle(hip.position, knee.position, ankle.position), 160, 200)) {
+            console.log("Knees are bent.")
+        } else {
+            position_detect = true
+        }
     } else {
-        console.log("Knees are bent.")
+        position_detect = true
     }
 
     // checking left side > shoulder should be infront of writst and elbow

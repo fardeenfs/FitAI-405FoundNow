@@ -158,7 +158,7 @@ function time_plank(pose){
     if (angle > 179 && angle < 182){
         if(check_pose(ear, shoulder, hip)){
             console.log("plank")
-            console.log(setInterval(timeCount, 1000));
+            setInterval(timeCount, 1000);
         } else {
             console.log("Back is not straight.")
         }

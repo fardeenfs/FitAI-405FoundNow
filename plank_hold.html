@@ -6,8 +6,7 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let counter_pushup = 0;
-let rep = false;
+let time = 0;
 
 async function init() {
     const modelURL = URL + "model.json";
@@ -103,6 +102,15 @@ function between(x, min, max) {
   return x >= min && x <= max;
 }
 
+function timeCount() {
+    const minutes = Math.floor(time/60);
+    let seconds = time % 60;
+
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    time++;
+    console.log(`${minutes}:${seconds}`)
+}
+
 function detect_pushup(keypoints) {
     
     let shoulder, elbow, wrist, ankle, hip;
@@ -145,16 +153,9 @@ function detect_pushup(keypoints) {
     if (position_detect) {
         // counting number of reps
         if (find_angle(shoulder.position, elbow.position, wrist.position) > 130) {
-            if (rep) {
-                counter_pushup += 1
-                rep = false
-            }
-        }
-        if (find_angle(shoulder.position, elbow.position, wrist.position) < 100) {
-            rep = true
+            setInterval(timeCount(), 1000)
         }
     }
-    console.log(counter_pushup, find_angle(shoulder.position, elbow.position, wrist.position))
 }
 init();
 </script>
