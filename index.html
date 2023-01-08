@@ -6,7 +6,7 @@
 <script type="text/javascript">
 const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
-let counter_pushup = 0, counter_squats = 0, counter_dips = 0;
+let counter_pushup = 0, counter_squats = 0, counter_dips = 0, counter_lunges = 0;
 let rep = false;
 
 // parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
@@ -84,9 +84,10 @@ function drawPose(pose) {
             //if (score_value_detect([pose.keypoints[11], pose.keypoints[12], pose.keypoints[13], pose.keypoints[14], pose.keypoints[15], pose.keypoints[16]], 0.1)) {
             //   detect_squats(pose.keypoints)
             //}
-            if (score_value_detect([pose.keypoints[5], pose.keypoints[7], pose.keypoints[9]], 0.1) || score_value_detect([pose.keypoints[6], pose.keypoints[8], pose.keypoints[10]], 0.1)) {
-                detect_dips(pose.keypoints)
-            }
+            detect_lunges(pose)
+            // if (score_value_detect([pose.keypoints[5], pose.keypoints[7], pose.keypoints[9]], 0.1) || score_value_detect([pose.keypoints[6], pose.keypoints[8], pose.keypoints[10]], 0.1)) {
+            //     detect_dips(pose.keypoints)
+            // }
             
         }
     }
@@ -268,12 +269,12 @@ function detect_lunges(pose){
  
     left_angle = Math.floor(find_angle(leftHip.position, leftKnee.position, leftAnkle.position))
     right_angle = Math.floor(find_angle(rightHip.position, rightKnee.position, rightAnkle.position))
-    if (check_degree(left_angle) && check_degree(right_angle)){
+    if (check_degree(left_angle)){
         if (!check_degree(left_angle) || !check_degree(right_angle)){
-            count_lunges ++
+            counter_lunges ++
         }
     }
-    console.log(count_lunges)
+    console.log(counter_lunges)
 }
 
 
