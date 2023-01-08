@@ -8,10 +8,6 @@ const URL = "https://teachablemachine.withgoogle.com/models/3UF71Zn6B/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 let time = 0;
 
-// parts {'nose', 'leftEye', 'rightEye', 'leftEar', 'rightEar', 'leftShoulder', 'rightShoulder', 'leftElbow',
-// 'rightElbow', 'leftWrist', 'rightWrist', 'leftHip', 'rightHip', 'leftKnee', 'rightKnee', 'leftAnkle', 
-// 'rightAnkle'}
-
 async function init() {
     const modelURL = URL + "model.json";
     const metadataURL = URL + "metadata.json";
@@ -76,11 +72,23 @@ function drawPose(pose) {
         // draw the keypoints and skeleton
         if (pose) {
             const minPartConfidence = 0.5;
-            time_plank(pose)
+            //console.log(pose.keypoints);
             tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
             tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+            if (score_value_detect([pose.keypoints[5], pose.keypoints[7], pose.keypoints[9]], 0.2) || score_value_detect([pose.keypoints[6], pose.keypoints[8], pose.keypoints[10]], 0.2)) {
+                detect_pushup(pose.keypoints)
+            }
         }
     }
+}
+
+function score_value_detect(landmarks, weight) {
+    for (var i=0; i < landmarks.length; i++) {
+        if (landmarks[i].score < weight) {
+            return false
+        }
+    }
+    return true
 }
 
 function find_angle(A,B,C) {
@@ -94,17 +102,6 @@ function between(x, min, max) {
   return x >= min && x <= max;
 }
 
-function detect_plank(wrist, shoulder, hip, ankle) {
-    // check for correct plank form
-    // return: boolean true if correct form
-    if (shoulder.score > 0.2 && hip.score > 0.2 && ankle.score > 0.2 && wrist.score > 0.2){
-        if (between(wrist.position.y, ankle.position.y - 30, ankle.position.y + 30)){
-            return true
-        }
-    }    
-    return false
-}
- 
 function timeCount() {
     const minutes = Math.floor(time/60);
     let seconds = time % 60;
@@ -114,59 +111,52 @@ function timeCount() {
     console.log(`${minutes}:${seconds}`)
 }
 
-function check_pose(ear, shoulder, hip){
-    if (check_degree){
-        return true
-    }
-    return false
-}
-
-function time_plank(pose){
-    let leftEar = pose.keypoints[3]
-    let leftWrist = pose.keypoints[9]
-    let leftShoulder = pose.keypoints[5]
-    let leftHip = pose.keypoints[11]
-    let leftAnkle = pose.keypoints[15]
+function detect_pushup(keypoints) {
     
-    let rightEar = pose.keypoints[4]
-    let rightWrist = pose.keypoints[10]
-    let rightShoulder = pose.keypoints[6]
-    let rightHip = pose.keypoints[12]
-    let rightAnkle = pose.keypoints[16]
+    let shoulder, elbow, wrist, ankle, hip;
+    let position_detect = false; // this will check if the user is in the correct position or not
 
-    let side = 0
-    let ear, shoulder, hip
-    if(detect_plank(leftWrist, leftShoulder, leftHip, leftAnkle)){
-        side = 1
-    } else if (detect_plank(rightWrist, rightShoulder, rightHip, rightAnkle)){
-        side = 2
-    }
-    var angle = 0
- 
-    if (side == 1){
-        ear = leftEar
-        shoulder = leftShoulder
-        hip = leftHip
-        angle = Math.floor(find_angle(leftShoulder.position, leftHip.position, leftAnkle.position))
+    // checking which side is visible, the elft or the right
+    if (keypoints[5].score > keypoints[6].score) {
+        shoulder = keypoints[5]
     } else {
-        ear = rightEar
-        shoulder = rightShoulder
-        hip = rightHip
-        angle = Math.floor(find_angle(rightShoulder.position, rightHip.position, rightAnkle.position))
+        shoulder = keypoints[6]
     }
-   
-    if (angle > 179 && angle < 182){
-        if(check_pose(ear, shoulder, hip)){
-            console.log("plank")
-            setInterval(timeCount, 1000);
-        } else {
-            console.log("Back is not straight.")
+
+    // if left side is viisble then we gather left side info, otherwise we gather right side info
+    if (shoulder.part === "leftShoulder") {
+        elbow = keypoints[7]
+        wrist = keypoints[9]
+        ankle = keypoints[15]
+        hip = keypoints[11]
+    } else {
+        elbow = keypoints[8]
+        wrist = keypoints[10]
+        ankle = keypoints[16]
+        hip = keypoints[12]
+    }
+
+    if (between(elbow.position.y, hip.position.y-30, hip.position.y+30)) { // wrist and ankle are in level
+        if (score_value_detect([hip, ankle, shoulder], 0.5)) {
+            if (!between(find_angle(shoulder.position, hip.position, ankle.position)), 160, 200) { // body is straight
+                console.log("Hip are too high.") 
+            }
+            else {
+                position_detect = true;
+            }
         }
-    } else {
-        console.log("not plank position.")
+        else {
+            position_detect = true;
+        }
+    }
+
+    if (position_detect) {
+        // counting number of reps
+        if (find_angle(shoulder.position, elbow.position, wrist.position) > 130) {
+            setInterval(timeCount(), 1000)
+        }
     }
 }
-
 init();
 </script>
 </html>
