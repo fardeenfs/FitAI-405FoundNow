@@ -21,7 +21,7 @@ class HomeCard extends StatelessWidget {
         // ONPRESS CONTROLL  NAV BAR PROGRAMMATICALLY TO INDEX 1
         padding: EdgeInsets.zero,
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => const MainHomePage(

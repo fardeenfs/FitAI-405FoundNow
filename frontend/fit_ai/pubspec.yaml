@@ -42,6 +42,7 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3
   percent_indicator: ^4.0.1
   syncfusion_flutter_charts: ^20.4.42
+  animated_page_transition: ^0.0.1+2
   intl: ^0.17.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

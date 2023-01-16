@@ -97,7 +97,7 @@ class _BottomCardState extends State<BottomCard> {
                     MaterialButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const MainHomePage(
@@ -155,9 +155,10 @@ class _BottomCardState extends State<BottomCard> {
                     MaterialButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
+                                maintainState: false,
                                 builder: (context) => const MainHomePage(
                                       index: 3,
                                     )));

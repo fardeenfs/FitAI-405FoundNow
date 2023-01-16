@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:animated_page_transition/animated_page_transition.dart';
 
 import '../pages/home_page.dart';
 import '../pages/habit_page.dart';
@@ -15,14 +16,14 @@ class MainHomePage extends StatefulWidget {
 }
 
 class _MainHomePageState extends State<MainHomePage> {
-  final _myBox = Hive.box("WorkoutDb");
   final _pages = [
-    HomePage(),
+    const HomePage(),
     const HabbitPage(),
     const ReportPage(),
     const ExplorePage(),
   ];
   int currentindex = 0;
+  @override
   void initState() {
     super.initState();
     currentindex = widget.index;
@@ -31,7 +32,10 @@ class _MainHomePageState extends State<MainHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: _pages[currentindex],
+        body: IndexedStack(
+          index: currentindex,
+          children: _pages,
+        ),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: currentindex,
             type: BottomNavigationBarType.fixed,
